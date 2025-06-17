@@ -40,10 +40,9 @@ public class Main {
         options.put(FlinkOptions.PARTITION_PATH_FIELD.key(), "city");
         options.put(FlinkOptions.TABLE_NAME.key(), "UBER");
         options.put(FlinkOptions.TABLE_TYPE.key(), FlinkOptions.TABLE_TYPE_MERGE_ON_READ); // Already likely set
-        options.put(FlinkOptions.COMPACTION_ASYNC_ENABLED.key(), "true");  // Enable compaction
-        options.put(FlinkOptions.COMPACTION_SCHEDULE_ENABLED.key(), "true"); // Schedule compaction
-        options.put(FlinkOptions.COMPACTION_DELTA_COMMITS.key(), "1"); // Run after 1 delta commit
-
+//        options.put(FlinkOptions.COMPACTION_ASYNC_ENABLED.key(), "true");  // Enable compaction
+//        options.put(FlinkOptions.COMPACTION_SCHEDULE_ENABLED.key(), "true"); // Schedule compaction
+//        options.put(FlinkOptions.COMPACTION_DELTA_COMMITS.key(), "1"); // Run after 1 delta commit
 
 
         DataStreamSource<RowData> dataStream = env.addSource(new SampleDataSource());
@@ -61,9 +60,13 @@ public class Main {
                 .column("city VARCHAR(20)")
                 .pk("uuid")
                 .partition("city")
+                .option("hoodie.compact.inline.enable", "true")
+                .option("hoodie.compact.inline.max.delta.commits", "1")
+                .option("hoodie.compact.schedule.inline", "true")
                 .options(options);
         builder.sink(dataStream,false);
 
+        env.enableCheckpointing(1000);
         env.execute("Flink Try");
 
     }
