@@ -57,12 +57,12 @@ public class Main {
                 .pk("uuid")
                 .partition("city")
                 .option("hoodie.compact.inline.enable", "true")
-                .option("hoodie.compact.inline.max.delta.commits", "1")
                 .option("hoodie.compact.schedule.inline", "true")
+                .option("hoodie.compact.inline.max.delta.seconds", "10")
                 .options(options);
         builder.sink(dataStream,false);
 
-        env.enableCheckpointing(1000);
+        env.enableCheckpointing(10000);
         env.execute("Flink Try");
 
     }
