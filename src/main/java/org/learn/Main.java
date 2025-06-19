@@ -59,10 +59,11 @@ public class Main {
                 .option("hoodie.compact.inline.enable", "true")
                 .option("hoodie.compact.schedule.inline", "true")
                 .option("hoodie.compact.inline.max.delta.seconds", "10")
+                .option("hoodie.compact.inline.trigger.strategy","TIME_ELAPSED")
                 .options(options);
         builder.sink(dataStream,false);
 
-        env.enableCheckpointing(10000);
+        env.enableCheckpointing(5000);
         env.execute("Flink Try");
 
     }
